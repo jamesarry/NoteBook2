@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF9F9F9"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"><!--BackgroundColor for every row of item will have-->
+
+    <!--List_row file is a custom layout file/view that we created to display items and images in the list view-->
+    <!--The Image properties-->
+    <ImageView
+        android:id="@+id/listItemNoteImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/instagram"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="15dp"/>
+
+    <!--The Title properties-->
+    <TextView
+        android:id="@+id/listItemNoteTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Note Title"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/listItemNoteImg"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:layout_marginBottom="2dp"/>
+
+    <!--The Body properties-->
+    <TextView
+        android:id="@+id/listItemNoteBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This is how our note text should look. We will live it like this for now"
+        android:layout_below="@id/listItemNoteTitle"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/listItemNoteImg"
+        android:ellipsize="end"
+        android:singleLine="true" />
+</RelativeLayout>
