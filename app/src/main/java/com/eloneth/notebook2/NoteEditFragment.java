@@ -27,7 +27,6 @@ public class NoteEditFragment extends Fragment {
           private static final String MODIFIED_CATEGORY = "Modified Category";//Variable for orientations changes
 
          public NoteEditFragment() {
-        // Required empty public constructor
     }
 
 
