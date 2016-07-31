@@ -27,21 +27,21 @@ public class NoteDetailActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();//FragmentManager is just a manager that manages all of our fragments
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        //Choose which fragments to load i.e edit or view
+        //Choose which fragments to load i.e edit, view or create. These are cases
         switch(fragmentToLaunch){
 
             case EDIT:
                 //Create and add NoteEditFragment to noteDetailActivity if we want to edit
                 NoteEditFragment noteEditFragment = new NoteEditFragment();
                 //Set title
-                setTitle( R.string.edit_Fragment_Title);//editFragmentTitle is defined in the string xml file
+                setTitle(R.string.edit_Fragment_Title);//editFragmentTitle is defined in the string xml file
                 //start adding noteEditFragment class into NoteDetailActivity class. note_container is the noteDetailActivity xml file we want to add the NoteEditFragment class to
                 fragmentTransaction.add(R.id.note_container, noteEditFragment, "NOTE_EDIT_FRAGMENT");
 
                 break;
 
             case VIEW:
-                ////Create and add NoteViewFragment to noteDetailActivity if that is what we want
+                //Create and add NoteViewFragment to noteDetailActivity if that is what we want
                 NoteViewFragment noteViewFragment = new NoteViewFragment();
                 //Set title
                 setTitle( R.string.view_Fragment_Title);//viewFragmentTitle is defined in the string xml file
@@ -49,6 +49,18 @@ public class NoteDetailActivity extends AppCompatActivity {
                 fragmentTransaction.add(R.id.note_container, noteViewFragment, "NOTE_VIEW_FRAGMENT");
 
                 break;
+
+            case CREATE:
+                //Create and add NoteEditFragment to noteDetailActivity if we want to edit
+                NoteEditFragment noteCreateFragment = new NoteEditFragment();
+                //Set title
+                setTitle(R.string.create_Fragment_Title);//editFragmentTitle is defined in the string xml file
+                //start adding noteEditFragment class into NoteDetailActivity class. note_container is the noteDetailActivity xml file we want to add the NoteEditFragment class to
+                fragmentTransaction.add(R.id.note_container, noteCreateFragment, "NOTE_CREATE_FRAGMENT");
+
+                break;
+
+
 
         }
 

@@ -1,5 +1,6 @@
 package com.eloneth.notebook2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String NOTE_FRAGMENT_TO_LOAD_EXTRA = "com.eloneth.notebook2.Fragment_To_Load";
 
      //Declaring enum that will be used to choose between displaying NoteViewFragment and NoteEditFragment in NoteDetailFragment
-    public enum FragmentToLaunch{VIEW, EDIT}
+    public enum FragmentToLaunch{VIEW, EDIT, CREATE}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +45,14 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //if we click on settings items, returns true
         if (id == R.id.action_settings) {
+            return true;
+            //else if add note button is clicked,
+        }else if(id == R.id.action_add_note){
+            Intent intent = new Intent(this, NoteDetailActivity.class);
+            intent.putExtra( MainActivity.NOTE_FRAGMENT_TO_LOAD_EXTRA, FragmentToLaunch.CREATE);
+            startActivity(intent);
             return true;
         }
 
