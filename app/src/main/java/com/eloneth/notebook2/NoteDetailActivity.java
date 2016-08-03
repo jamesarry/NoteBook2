@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 public class NoteDetailActivity extends AppCompatActivity {
 
+      public static  final  String New_Note_Extra = "New Note";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,10 @@ public class NoteDetailActivity extends AppCompatActivity {
                 NoteEditFragment noteCreateFragment = new NoteEditFragment();
                 //Set title
                 setTitle(R.string.create_Fragment_Title);//editFragmentTitle is defined in the string xml file
+                //We want to be able to send a new note to our fragment
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(New_Note_Extra, true);
+                noteCreateFragment.setArguments(bundle);
                 //start adding noteEditFragment class into NoteDetailActivity class. note_container is the noteDetailActivity xml file we want to add the NoteEditFragment class to
                 fragmentTransaction.add(R.id.note_container, noteCreateFragment, "NOTE_CREATE_FRAGMENT");
 

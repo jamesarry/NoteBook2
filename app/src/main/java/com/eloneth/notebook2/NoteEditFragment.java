@@ -26,6 +26,8 @@ public class NoteEditFragment extends Fragment {
 
           private static final String MODIFIED_CATEGORY = "Modified Category";//Variable for orientations changes
 
+          private boolean newNote = false;
+
          public NoteEditFragment() {
     }
 
@@ -33,6 +35,12 @@ public class NoteEditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+           //Grab the bundle that sends along whether or not our noteEditFragment is creating a new note
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+            newNote = bundle.getBoolean(NoteDetailActivity.New_Note_Extra, false);
+        }
 
          //Restore back/retrieve back the orientation
         if(savedInstanceState != null){//If some variables/data are saved in saveInstance state because of orientation changes, retrieve it
@@ -60,7 +68,7 @@ public class NoteEditFragment extends Fragment {
         if(savedInstanceState != null){
             noteCatButton.setImageResource(Note.categoryToDrawable(saveButtonCategory));
             //Otherwise, we came from our list fragment ,so just do everything normally
-        }else{
+        }else if(!newNote){
         Note.Category noteCat = (Note.Category) intent.getSerializableExtra(MainActivity.NOTE_CATEGORY_EXTRA);
         saveButtonCategory = noteCat; //For our log.d
         noteCatButton.setImageResource(Note.categoryToDrawable(noteCat));
