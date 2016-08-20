@@ -30,8 +30,8 @@ public class Note {
         this.title = title;
         this.message = message;
         this.category = category;
-        this.noteId = 0;
-        this.dateCreatedMilli = 0;
+        this.noteId =  noteId;
+        this.dateCreatedMilli = dateCreatedMilli;
     }
 
 

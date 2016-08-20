@@ -34,16 +34,28 @@ public class MainActivityListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
 
-        notes = new ArrayList<Note>();//init it
-        //Fill Note ArrayList with data
-        notes.add(new Note("Looking Good", "This is the body of our note", Note.Category.PERSONAL));
-        notes.add(new Note("My Finance", "I cannot believe I have improved so much", Note.Category.FINANCE));
-        notes.add(new Note("My Technician", "I am doing great", Note.Category.TECHNICAL));
-        notes.add(new Note("This is a new note title", "This is the body of our note", Note.Category.FINANCE));
-        notes.add(new Note("This is a new note title", "This is the body of our note", Note.Category.PERSONAL));
-        notes.add(new Note("Stay positive", "This is the body of our note", Note.Category.QUOTE));
-        notes.add(new Note("It can only get better", "This is the body of our note", Note.Category.PERSONAL));
-        notes.add(new Note("This is a new note title", "This is the body of our note", Note.Category.QUOTE));
+
+        /** We no longer need these Array list because we have our SQLite database
+         notes = new ArrayList<Note>();//init it
+         //Fill Note ArrayList with data
+         notes.add(new Note("Looking Good", "This is the body of our note", Note.Category.PERSONAL));
+         notes.add(new Note("My Finance", "I cannot believe I have improved so much", Note.Category.FINANCE));
+         notes.add(new Note("My Technician", "I am doing great", Note.Category.TECHNICAL));
+         notes.add(new Note("This is a new note title", "This is the body of our note", Note.Category.FINANCE));
+         notes.add(new Note("This is a new note title", "This is the body of our note", Note.Category.PERSONAL));
+         notes.add(new Note("Stay positive", "This is the body of our note", Note.Category.QUOTE));
+         notes.add(new Note("It can only get better", "This is the body of our note", Note.Category.PERSONAL));
+         notes.add(new Note("This is a new note title", "This is the body of our note", Note.Category.QUOTE));**/
+
+        //we will reference our SQLite database here
+        NotebookDbAdapter dbAdapter = new NotebookDbAdapter(getActivity().getBaseContext());
+        //We must first open our database before working with it
+        dbAdapter.open();
+        //Get all db data from getAllNote method into notes Array List
+        notes = dbAdapter.getAllNotes();
+
+        dbAdapter.close();
+
 
 
         noteAdapter = new NoteAdapter(getActivity(), notes);//init the noteAdapter and pass in the notes data i.e Note class
