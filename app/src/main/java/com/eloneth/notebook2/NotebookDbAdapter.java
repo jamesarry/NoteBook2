@@ -1,5 +1,6 @@
 package com.eloneth.notebook2;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by emmanuel on 3.8.2016.
@@ -56,6 +58,37 @@ public class NotebookDbAdapter {
     public void close(){
         notebookDbHelper.close();
 
+    }
+      //Method to create new data in db
+    public Note createNote(String title, String message, Note.Category category){
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TITLE, title);
+        values.put(COLUMN_MESSAGE, message);
+        values.put(COLUMN_CATEGORY, category.name());
+        values.put(COLUMN_DATE, Calendar.getInstance().getTimeInMillis() + "");
+
+        long insertId = sqlDB.insert(NOTE_TABLE, null, values);
+
+        Cursor cursor = sqlDB.query(NOTE_TABLE,
+                allColumns, COLUMN_ID + " = " + insertId, null, null, null, null );
+
+        cursor.moveToFirst();
+        Note newNote = cursorToNote(cursor);
+        cursor.close();
+        return newNote;
+    }
+
+      //Method to update the db. passing in arguments to represent data fields. ContentValues will hold the data to be updated
+    public long updateNote(long idToUpdate, String newTitle, String newMessage, Note.Category newCategory){
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TITLE, newTitle);
+        values.put(COLUMN_MESSAGE, newMessage);
+        values.put(COLUMN_CATEGORY, newCategory.name());
+        values.put(COLUMN_DATE, Calendar.getInstance().getTimeInMillis() + "");
+
+        //Look for the row where the COLUMN_ID is = idToUpdate, when it found, replace the values with the ones given in values
+        return  sqlDB.update(NOTE_TABLE, values, COLUMN_ID + " = " + idToUpdate, null);
     }
 
      //We will use getAllNote() to grab all of our note database items and display them in our Main Activity list fragment

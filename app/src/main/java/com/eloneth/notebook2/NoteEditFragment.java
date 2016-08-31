@@ -21,12 +21,14 @@ import android.widget.ImageButton;
 public class NoteEditFragment extends Fragment {
           private ImageButton noteCatButton;//Declaring your ImageButton global
           private EditText title, message;
-          private Note.Category  saveButtonCategory;//variable to store the edited data when the ImageButton is clicked
+          private Note.Category  savedButtonCategory;//variable to store the edited data when the ImageButton is clicked
           private AlertDialog categoryDialogObject, confirmDialogObject; //Creating objects for the two dialog box classes
 
           private static final String MODIFIED_CATEGORY = "Modified Category";//Variable for orientations changes
 
           private boolean newNote = false;
+          private  long noteId = 0;
+
 
          public NoteEditFragment() {
     }
@@ -36,7 +38,7 @@ public class NoteEditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-           //Grab the bundle that sends along whether or not our noteEditFragment is creating a new note
+        //Grab the bundle that sends along whether or not our noteEditFragment is creating a new note
         Bundle bundle = this.getArguments();
         if(bundle != null){
             newNote = bundle.getBoolean(NoteDetailActivity.New_Note_Extra, false);
@@ -44,7 +46,8 @@ public class NoteEditFragment extends Fragment {
 
          //Restore back/retrieve back the orientation
         if(savedInstanceState != null){//If some variables/data are saved in saveInstance state because of orientation changes, retrieve it
-            saveButtonCategory = (Note.Category) savedInstanceState.get(MODIFIED_CATEGORY); //retrieve it from MODIFIED_CATEGORY
+            savedButtonCategory = (Note.Category) savedInstanceState.get(MODIFIED_CATEGORY); //retrieve it from MODIFIED_CATEGORY
+
 
         }
 
@@ -56,21 +59,22 @@ public class NoteEditFragment extends Fragment {
         title = (EditText) fragmentLayout.findViewById(R.id.editNoteTitle);
         message = (EditText) fragmentLayout.findViewById(R.id.editNoteMessage);
         noteCatButton = (ImageButton) fragmentLayout.findViewById(R.id.editNoteButton);
-        Button saveButton =(Button) fragmentLayout.findViewById(R.id.saveNote);
+        Button savedButton =(Button) fragmentLayout.findViewById(R.id.saveNote);
 
 
         //Populate the ids with note data from MainActivity for the purpose of editing
         Intent intent = getActivity().getIntent();
-        title.setText(intent.getExtras().getString(MainActivity.NOTE_TITLE_EXTRA, ""));
-        message.setText(intent.getExtras().getString(MainActivity.NOTE_MESSAGE_EXTRA, ""));
+        title.setText(intent.getExtras().getString(MainActivity.NOTE_TITLE_EXTRA));
+        message.setText(intent.getExtras().getString(MainActivity.NOTE_MESSAGE_EXTRA));
+        noteId = intent.getExtras().getLong(MainActivity.NOTE_ID_EXTRA, 0);
         //If we grab a category from our bundle then we know we change our orientation and save information
         //So set our image button background to that category
         if(savedInstanceState != null){
-            noteCatButton.setImageResource(Note.categoryToDrawable(saveButtonCategory));
+            noteCatButton.setImageResource(Note.categoryToDrawable(savedButtonCategory));
             //Otherwise, we came from our list fragment ,so just do everything normally
         }else if(!newNote){
         Note.Category noteCat = (Note.Category) intent.getSerializableExtra(MainActivity.NOTE_CATEGORY_EXTRA);
-        saveButtonCategory = noteCat; //For our log.d
+        savedButtonCategory = noteCat; //For our log.d
         noteCatButton.setImageResource(Note.categoryToDrawable(noteCat));
         }
         //Calling our category dialog and confirm dialog boxs in our onCreate method
@@ -87,7 +91,7 @@ public class NoteEditFragment extends Fragment {
         } );
 
         //When the saveButton is clicked
-        saveButton.setOnClickListener( new View.OnClickListener() {
+        savedButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 confirmDialogObject.show();//Call the the confirmDialog box when the save button is clicked
@@ -102,7 +106,7 @@ public class NoteEditFragment extends Fragment {
        @Override
        public void onSaveInstanceState(Bundle savedInstanceState){
            super.onSaveInstanceState(savedInstanceState);
-           savedInstanceState.putSerializable(MODIFIED_CATEGORY, saveButtonCategory);//Changes variable/data when orientation changes and save it in MODIFIED_CATEGORY
+           savedInstanceState.putSerializable(MODIFIED_CATEGORY, savedButtonCategory);//Changes variable/data when orientation changes and save it in MODIFIED_CATEGORY
        }
         //A method where you can create your edit dialog box
        private void buildCategoryDialog(){
@@ -120,19 +124,19 @@ public class NoteEditFragment extends Fragment {
                    //Allow the user to choose which category he wants to edit. 0 rep Personal, 1 rep Technical and so on
                    switch(item){
                        case 0:
-                           saveButtonCategory = Note.Category.PERSONAL;//if the user choose to edit personal, save the edit in saveButtonCategory object and so on for other categories below.
+                           savedButtonCategory = Note.Category.PERSONAL;//if the user choose to edit personal, save the edit in saveButtonCategory object and so on for other categories below.
                            noteCatButton.setImageResource(R.drawable.instagram);//Also set the image for that category
                            break;
                        case 1:
-                           saveButtonCategory = Note.Category.TECHNICAL;
+                           savedButtonCategory = Note.Category.TECHNICAL;
                            noteCatButton.setImageResource(R.drawable.grit);
                            break;
                        case 2:
-                           saveButtonCategory = Note.Category.QUOTE;
+                           savedButtonCategory = Note.Category.QUOTE;
                            noteCatButton.setImageResource(R.drawable.hit);
                            break;
                        case 3:
-                           saveButtonCategory = Note.Category.FINANCE;
+                           savedButtonCategory = Note.Category.FINANCE;
                            noteCatButton.setImageResource(R.drawable.pen);
                            break;
                    }
@@ -151,7 +155,23 @@ public class NoteEditFragment extends Fragment {
            confirmBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                @Override
                public void onClick(DialogInterface dialog, int which) {
-                    Log.d("Save Note", "Note Title: " + title.getText() + "Note Message: " + message.getText() + " Note Category " + saveButtonCategory);
+                    Log.d("Save Note", "Note Title: " + title.getText() + "Note Message: " + message.getText() + " Note Category " + savedButtonCategory);
+
+                   //Declare and Initialize NotebookDbAdapter
+                   NotebookDbAdapter dbAdapter = new NotebookDbAdapter(getActivity().getBaseContext());
+                   dbAdapter.open();
+
+                   //If it a new note, create/insert it in our database. Calling createNote() from NotebookDbAdapter class
+                   if(newNote) {
+                       //If it is a new note, create it in the database
+                       dbAdapter.createNote( title.getText() + "", message.getText() + "",
+                               (savedButtonCategory == null) ? Note.Category.PERSONAL : savedButtonCategory );
+                   }else {
+                       //else, if it an existing note, update our database. Calling updateNote() from NotebookDbAdapter class
+                       dbAdapter.updateNote(noteId, title.getText() + "", message.getText() + "", savedButtonCategory);
+                   }
+
+                   dbAdapter.close();
                     //When positive btn is clicked to confirm save edited text, call/go back to MainActivity class
                     Intent intent = new Intent(getActivity(), MainActivity.class);//getActivity() means from where we are coming and MainActivity means from where we are going
                     startActivity(intent);
@@ -163,7 +183,7 @@ public class NoteEditFragment extends Fragment {
                @Override
                public void onClick(DialogInterface dialog, int which) {
                    //Do nothing here
-                   Log.d("Save Note", "Note Title: " + title.getText() + "Note Message: " + message.getText() + "Note Category" + saveButtonCategory);
+                   Log.d("Save Note", "Note Title: " + title.getText() + "Note Message: " + message.getText() + "Note Category" + savedButtonCategory);
                }
            } );
                confirmDialogObject = confirmBuilder.create();//Create the 2nd dialog and set the dialog builder to the dialog box class
