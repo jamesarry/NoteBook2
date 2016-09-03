@@ -59,7 +59,7 @@ public class NotebookDbAdapter {
         notebookDbHelper.close();
 
     }
-      //Method to create new data in db
+      //Method to create or add new data into the db
     public Note createNote(String title, String message, Note.Category category){
         ContentValues values = new ContentValues();
         values.put(COLUMN_TITLE, title);
@@ -77,6 +77,13 @@ public class NotebookDbAdapter {
         cursor.close();
         return newNote;
     }
+
+
+        //Delete method. Delete from table where column id = idToDelete. It will return as many rows as we want to delete
+      public  long deleteNote(long idToDelete){
+          return sqlDB.delete(NOTE_TABLE, COLUMN_ID + " = " + idToDelete, null);
+
+      }
 
       //Method to update the db. passing in arguments to represent data fields. ContentValues will hold the data to be updated
     public long updateNote(long idToUpdate, String newTitle, String newMessage, Note.Category newCategory){

@@ -90,9 +90,14 @@ public class MainActivityListFragment extends ListFragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item){
-        //Give me the position of whatever note is long pressed on
-        AdapterView.AdapterContextMenuInfo infor = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int rowPosition = infor.position;
+        //Get the position of whatever note is long pressed on
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        int rowPosition = info.position;
+
+        //Get the id of note that is long pressed on
+        Note note = (Note) getListAdapter().getItem(rowPosition);
+
         //Return to us the id of the menu selected
         switch(item.getItemId()){
                  //If we press edit
@@ -101,8 +106,21 @@ public class MainActivityListFragment extends ListFragment {
                 launchNoteDetailActivity(MainActivity.FragmentToLaunch.EDIT, rowPosition);
                 Log.d("Menu clicked", "We pressed edit");//Just a method to check our log
              return true;
+
+            //create a switch statement to state what we want to happen when delete item is pressed
+            case R.id.delete:
+                NotebookDbAdapter dbAdapter = new NotebookDbAdapter(getActivity().getBaseContext());
+                dbAdapter.open();
+                dbAdapter.deleteNote(note.getId());
+
+                //Refresh the database after delete
+                notes.clear();
+                notes.addAll(dbAdapter.getAllNotes());
+                noteAdapter.notifyDataSetChanged();
+
+                dbAdapter.close();
         }
-        //if we dont press anything, return
+        //if we do not press anything, return
         return super.onContextItemSelected(item);
     }
     //use to get position of the list clicked so that we can launch our NoteDetailActivity.class;
