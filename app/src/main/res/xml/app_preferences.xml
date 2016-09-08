@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--This preference will be used to store general data-->
+    <PreferenceCategory
+        android:title="General">
+      <!-- EditTextPreference give the user the ability to input text into the preference.
+      summary gives a little description about the preference.
+      Key is what we will use to retrieve the setting in the Notebook application
+      The default text is Notebook but users can always edit and put in their own data
+      -->
+        <EditTextPreference
+            android:title="Notebook Title"
+            android:summary="The title that will be used on the main action bar."
+            android:key="title"
+            android:defaultValue="Notebook"/>
+    </PreferenceCategory>
+
+
+    <!-- The Preference category gives the user ability to check a true of false value for general color-->
+    <PreferenceCategory
+        android:title="Color">
+
+        <CheckBoxPreference
+        android:title="Dark Background"
+        android:summary="Is the main background color black?"
+        android:key="background_color"
+        android:defaultValue="false"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
